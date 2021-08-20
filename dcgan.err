@@ -1,0 +1,26 @@
+2021-04-17 17:52:46.974891: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
+2021-04-17 17:52:53.313719: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2021-04-17 17:52:53.315048: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcuda.so.1
+2021-04-17 17:52:53.353713: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
+pciBusID: 0000:04:00.0 name: Tesla K40c computeCapability: 3.5
+coreClock: 0.745GHz coreCount: 15 deviceMemorySize: 11.92GiB deviceMemoryBandwidth: 268.58GiB/s
+2021-04-17 17:52:53.354593: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 1 with properties: 
+pciBusID: 0000:82:00.0 name: Tesla K40c computeCapability: 3.5
+coreClock: 0.745GHz coreCount: 15 deviceMemorySize: 11.92GiB deviceMemoryBandwidth: 268.58GiB/s
+2021-04-17 17:52:53.354635: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
+2021-04-17 17:52:53.354772: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcublas.so.11'; dlerror: libcublas.so.11: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /opt/nvidia/hpc_sdk/Linux_x86_64/2020/cuda/11.0/lib64:/opt/miniconda/miniconda3/lib/:/opt/miniconda/miniconda3/lib64/
+2021-04-17 17:52:53.354863: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcublasLt.so.11'; dlerror: libcublasLt.so.11: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /opt/nvidia/hpc_sdk/Linux_x86_64/2020/cuda/11.0/lib64:/opt/miniconda/miniconda3/lib/:/opt/miniconda/miniconda3/lib64/
+2021-04-17 17:52:53.354952: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcufft.so.10'; dlerror: libcufft.so.10: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /opt/nvidia/hpc_sdk/Linux_x86_64/2020/cuda/11.0/lib64:/opt/miniconda/miniconda3/lib/:/opt/miniconda/miniconda3/lib64/
+2021-04-17 17:52:53.355049: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcurand.so.10'; dlerror: libcurand.so.10: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /opt/nvidia/hpc_sdk/Linux_x86_64/2020/cuda/11.0/lib64:/opt/miniconda/miniconda3/lib/:/opt/miniconda/miniconda3/lib64/
+2021-04-17 17:52:53.355137: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcusolver.so.10'; dlerror: libcusolver.so.10: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /opt/nvidia/hpc_sdk/Linux_x86_64/2020/cuda/11.0/lib64:/opt/miniconda/miniconda3/lib/:/opt/miniconda/miniconda3/lib64/
+2021-04-17 17:52:53.355222: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcusparse.so.11'; dlerror: libcusparse.so.11: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /opt/nvidia/hpc_sdk/Linux_x86_64/2020/cuda/11.0/lib64:/opt/miniconda/miniconda3/lib/:/opt/miniconda/miniconda3/lib64/
+2021-04-17 17:52:53.355306: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcudnn.so.8'; dlerror: libcudnn.so.8: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /opt/nvidia/hpc_sdk/Linux_x86_64/2020/cuda/11.0/lib64:/opt/miniconda/miniconda3/lib/:/opt/miniconda/miniconda3/lib64/
+2021-04-17 17:52:53.355336: W tensorflow/core/common_runtime/gpu/gpu_device.cc:1757] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+2021-04-17 17:52:53.355794: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2021-04-17 17:52:53.355954: I tensorflow/compiler/jit/xla_gpu_device.cc:99] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2021-04-17 17:52:53.356031: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1261] Device interconnect StreamExecutor with strength 1 edge matrix:
+2021-04-17 17:52:53.356063: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1267]      
+2021-04-17 17:52:54.936450: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:116] None of the MLIR optimization passes are enabled (registered 2)
+2021-04-17 17:52:54.942575: I tensorflow/core/platform/profile_utils/cpu_utils.cc:112] CPU Frequency: 2099945000 Hz
