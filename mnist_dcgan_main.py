@@ -8,11 +8,11 @@ import matplotlib.pyplot as plt
 
 #pip install -q imageio
 #pip install -q git+https://github.com/tensorflow/docs
-import glob
-import imageio
-import numpy as np
+# import glob
+# import imageio
+# import numpy as np
 import os
-import PIL
+# import PIL
 import time
 import tensorflow as tf
 from IPython import display
@@ -32,6 +32,7 @@ train_images_float.dtype
 class_names = ['0', '1', '2', '3','4','5','6','7','8','9']
 
 plt.figure(figsize=(8,8))
+
 for i in range(25):
     plt.subplot(5,5,i+1)
     plt.xticks([])
@@ -68,6 +69,7 @@ type(train_dataset)
 # https://iksinc.online/2017/05/06/deconvolution-in-deep-learning/
 
 def make_generator_model():
+    
     model = tf.keras.Sequential()
     model.add(Dense(7*7*256, use_bias=False, input_shape=(100,)))
     model.add(BatchNormalization())
@@ -95,6 +97,18 @@ def make_generator_model():
 # USE UNTRAINED GENERATOR TO TRAIN AN IMAGE
 generator = make_generator_model()
 generator.summary()
+
+# To load models
+
+# 1st way
+# generator.load_weights("saved_model_weights_only/")
+
+# 2nd way
+generator = tf.keras.models.load_model('complete_saved_model')
+# or
+# generator = tf.keras.models.load_model('saved_model.h5')
+
+# TEST PLOT GENERATOR OUTPUT SINGLE IMAGE
 noise = tf.random.normal([1, 100]) # TensorShape([1, 100])
 
 generated_image = generator(noise, training=False) # TensorShape([1, 28, 28, 1])
@@ -104,6 +118,7 @@ plt.imshow(generated_image[0, :, :, 0], cmap='gray')
 
 # DISCRIMINATOR
 def make_discriminator_model():
+    
     model = tf.keras.Sequential()
     model.add(Conv2D(64, (5, 5), strides=(2, 2), padding='same',
                                      input_shape=[28, 28, 1]))
@@ -134,31 +149,44 @@ cross_entropy = BinaryCrossentropy(from_logits=True)
 # bce = BinaryCrossentropy()
 # bce(y_true, y_pred).numpy()
 
-# Discriminator loss
+# DISCRIMINATOR LOSS
 def discriminator_loss(real_output, fake_output):
+    
     real_loss = cross_entropy(tf.ones_like(real_output), real_output)
     fake_loss = cross_entropy(tf.zeros_like(fake_output), fake_output)
     total_loss = real_loss + fake_loss
+    
     return total_loss
 
-# Generator loss
+# GENERATOR LOSS
 def generator_loss(fake_output):
+    
     return cross_entropy(tf.ones_like(fake_output), fake_output)
 
 
 generator_optimizer = tf.keras.optimizers.Adam(1e-4)
 discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
 
-# Save checkpoints
-checkpoint_dir = './training_checkpoints'
-checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
+# SAVE CHECKPOINTS
+checkpoint_dir = './training_checkpoints_local'
+# checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
 checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  discriminator_optimizer=discriminator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 
+# To load models
+# 3rd way
+manager = tf.train.CheckpointManager(checkpoint, directory=checkpoint_dir, max_to_keep=2)
+
+# IF WANT TO RELOAD WEIGHTS FROM PREVIOUS TRAINING
+reload_from_previous_training = False
+
+if reload_from_previous_training:
+    checkpoint.restore(manager.latest_checkpoint) # use this if using manager
+
 # Define the training points
-EPOCHS = 50
+EPOCHS = 4
 noise_dim = 100
 num_examples_to_generate = 25
 
@@ -170,9 +198,11 @@ seed = tf.random.normal([num_examples_to_generate, noise_dim]) # TensorShape([16
 # This annotation causes the function to be "compiled".
 @tf.function
 def train_step(images):
+    
     noise = tf.random.normal([BATCH_SIZE, noise_dim])
 
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
+        
         generated_images = generator(noise, training=True)
 
         real_output = discriminator(images, training=True)
@@ -181,21 +211,28 @@ def train_step(images):
         gen_loss = generator_loss(fake_output)
         disc_loss = discriminator_loss(real_output, fake_output)
 
-    gradients_of_generator = gen_tape.gradient(gen_loss, generator.trainable_variables)
+    gradients_of_generator = gen_tape.gradient(gen_loss, generator.trainable_variables) # WOW! THIS IS AMAZING!
     gradients_of_discriminator = disc_tape.gradient(disc_loss, discriminator.trainable_variables)
 
     generator_optimizer.apply_gradients(zip(gradients_of_generator, generator.trainable_variables))
     discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, discriminator.trainable_variables))
 
 def train(dataset, epochs):
+    
     print('start training')
+    
     for epoch in range(epochs):
-        print('epoch')
+        
+        print('Training epoch {}'.format(epoch))
         start = time.time()
-
+        
+        i = 1
         for image_batch in dataset:
-            print('image_batch')
+            
+            print('image_batch {}'.format(i))
+            
             train_step(image_batch)
+            i += 1
 
         # Produce images for the GIF as you go
         display.clear_output(wait=True)
@@ -204,11 +241,17 @@ def train(dataset, epochs):
                                  seed)
 
         # Save the model every 15 epochs
-        if (epoch + 1) % 15 == 0:
-          checkpoint.save(file_prefix = checkpoint_prefix)
+        if (epoch + 1) % 1 == 0:
+          # checkpoint.save(file_prefix = checkpoint_prefix)
+          manager.save()
+          generator.save_weights("saved_model_weights_only/")
 
         print ('Time for epoch {} is {} sec'.format(epoch + 1, time.time()-start))
-
+    
+    generator.save("complete_saved_model.h5")
+    # or
+    # generator.save("saved_model.h5")
+    
   # Generate after the final epoch
     display.clear_output(wait=True)
     generate_and_save_images(generator,
@@ -217,28 +260,40 @@ def train(dataset, epochs):
 
 # GENERATE AND SAVE IMAGES
 def generate_and_save_images(model, epoch, test_input):
+    
     # Notice `training` is set to False.
     # This is so all layers run in inference mode (batchnorm).
     predictions = model(test_input, training=False)
 
-    fig = plt.figure(figsize=(5, 5))
+    plt.figure(figsize=(5, 5))
 
     for i in range(predictions.shape[0]):
+        
         plt.subplot(5, 5, i+1)
         plt.imshow(predictions[i, :, :, 0] * 127.5 + 127.5, cmap='gray')
         plt.axis('off')
+    
+    save_image_dir = "saved_images"
+    
+    if os.path.exists(save_image_dir):
+        
+        print('directory exists')
+        
+    else:
+        os.mkdir(save_image_dir)
+    
+    plt.savefig('saved_images/image_at_epoch_{:04d}.png'.format(epoch))
+    # plt.show()
+    plt.close()
 
-    plt.savefig('image_at_epoch_{:04d}.png'.format(epoch))
-    plt.show()
 
-
-#plt.plot([0, 1, 2, 3, 4], [0, 3, 5, 9, 11])
-#plt.xlabel('Months')
-#plt.ylabel('Books Read')
-#plt.savefig('books_read.png')
-
-# TRAIN THE MODEL
+# # TRAIN THE MODEL
 train(train_dataset, EPOCHS)
 
-# RESTORE THE LATEST CHECKPOINT
-checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
+# # RESTORE THE LATEST CHECKPOINT
+    # To restore the models, e.g generator, 
+    # 1) create a generator first using make() generator,
+    # 2) run all checkpoint codes, then only
+    # 3) checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
+# checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
+# checkpoint.restore(manager.latest_checkpoint) # use this if using manager
