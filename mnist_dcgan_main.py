@@ -1,9 +1,9 @@
 # DCGAN
 # https://www.tensorflow.org/tutorials/generative/dcgan
 
-from keras.models import Sequential
-from keras.layers import Conv2D, Dropout, Dense, Flatten, BatchNormalization, LeakyReLU, Reshape, Conv2DTranspose
-from keras.losses import BinaryCrossentropy
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, Dropout, Dense, Flatten, BatchNormalization, LeakyReLU, Reshape, Conv2DTranspose
+from tensorflow.keras.losses import BinaryCrossentropy
 import matplotlib.pyplot as plt
 
 #pip install -q imageio
@@ -16,16 +16,18 @@ import os
 import time
 import tensorflow as tf
 from IPython import display
-from keras.datasets import mnist
+from tensorflow.keras.datasets import mnist
 from tensorflow.data import Dataset
 
 # IMPORT MNIST DATASET
+
 (train_images, train_labels), (_, _) = mnist.load_data()
 train_images_float=train_images.reshape(train_images.shape[0],28,28,1).astype('float32')
-train_images.shape
-train_images.dtype
-train_images_float.shape
-train_images_float.dtype
+# train_images.shape
+# train_images.dtype
+# train_images_float.shape
+# train_images_float.dtype
+train_images_float = train_images_float[0:10000]
 
 
 # SHOW DATASET IMAGES
@@ -70,7 +72,7 @@ type(train_dataset)
 
 def make_generator_model():
     
-    model = tf.keras.Sequential()
+    model = Sequential()
     model.add(Dense(7*7*256, use_bias=False, input_shape=(100,)))
     model.add(BatchNormalization())
     model.add(LeakyReLU())
@@ -98,13 +100,18 @@ def make_generator_model():
 generator = make_generator_model()
 generator.summary()
 
-# To load models
+
+# TO LOAD FROM PREVIOUS TRAININGS
 
 # 1st way
-# generator.load_weights("saved_model_weights_only/")
+previous_training_dir = "saved_model_weights_only/"
+
+if os.path.exists(previous_training_dir):
+    
+    generator.load_weights(previous_training_dir)
 
 # 2nd way
-generator = tf.keras.models.load_model('complete_saved_model')
+# generator = tf.keras.models.load_model('complete_saved_model') # save in folder
 # or
 # generator = tf.keras.models.load_model('saved_model.h5')
 
@@ -186,7 +193,7 @@ if reload_from_previous_training:
     checkpoint.restore(manager.latest_checkpoint) # use this if using manager
 
 # Define the training points
-EPOCHS = 4
+EPOCHS = 1
 noise_dim = 100
 num_examples_to_generate = 25
 
@@ -244,11 +251,12 @@ def train(dataset, epochs):
         if (epoch + 1) % 1 == 0:
           # checkpoint.save(file_prefix = checkpoint_prefix)
           manager.save()
-          generator.save_weights("saved_model_weights_only/")
+          
 
         print ('Time for epoch {} is {} sec'.format(epoch + 1, time.time()-start))
     
-    generator.save("complete_saved_model.h5")
+    generator.save_weights("saved_model_weights_only/")
+    # generator.save("complete_saved_model.h5")
     # or
     # generator.save("saved_model.h5")
     

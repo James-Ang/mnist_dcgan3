@@ -3,3 +3,5 @@
 /output3
 /output25_1
 /saved_images
+/training_checkpoints_local
+/saved_model_weights_only
